@@ -1,0 +1,49 @@
+# ── Python ──────────────────────────────────────────────
+venv/
+.venv/
+test_env/
+backend/test_env/
+backend/venv/
+backend/.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── AI model caches (HuggingFace / DeepFilterNet / Torch) ──
+.cache/
+hf_cache/
+torch_cache/
+df_cache/
+# deepfilternet stores models here by default
+DeepFilterNet*/
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# ── Test / temp files ──────────────────────────────────
+*.mp4
+*.wav
+temp_*/
+result.mp4
+ClearVoice-AI/
+
+# ── macOS ───────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── Editor ──────────────────────────────────────────────
+.vscode/
+*.swp
+*.swo
+
+# ── Env files ───────────────────────────────────────────
+.env
+.env.local
+.env*.local

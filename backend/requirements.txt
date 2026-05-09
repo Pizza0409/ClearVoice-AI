@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-multipart
+# 鎖定 torch 相關版本
+torch==2.2.2
+torchaudio==2.2.2
+# 降噪核心
+deepfilternet
+# 處理音訊必備
+librosa

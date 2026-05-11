@@ -1,36 +1,41 @@
-# 🎬 AI 影片降噪神器 | AI Video Denoiser
-> **一鍵消除背景雜訊，讓你的短影音人聲瞬間變專業！專業級 AI 降噪，創作者的最佳助手。**
+# ClearVoice AI — AI Video Denoiser
+
+> One-click AI denoising for short-form video: make voices pop and cut background noise—free in the browser.
+
+**Traditional Chinese README:** [README.zh.md](README.zh.md)
 
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Deployed-black?style=flat-square&logo=vercel)](https://clear-voice-ai.vercel.app/)
-[![HuggingFace Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-yellow?style=flat-square)](https://huggingface.co/spaces/Pizza0409/ClearVoice-AI)
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-yellow?style=flat-square)](https://huggingface.co/spaces/pizza0409/ClearVoice-AI)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-[🚀 立即使用 (Web Demo)](https://clear-voice-ai.vercel.app/) | [📖 English Version](README.en.md)
+[Try the live demo](https://clear-voice-ai.vercel.app/) · [简体中文 / 繁體說明](README.zh.md)
 
 ---
 
-## 💡 為什麼需要這個工具？
-在 **Reels、TikTok、YouTube Shorts** 盛行的時代，聲音品質直接決定了觀眾的留存率。
-許多創作者在初期設備不足或在戶外拍攝時，常受限於以下痛點：
-*   ❌ **環境雜訊**：嘈雜的街頭車流聲、人群喧嘩、風聲。
-*   ❌ **設備底噪**：室內空調、電腦風扇的嗡嗡聲。
-*   ❌ **預算限制**：尚未購買昂貴的專業降噪麥克風。
+## Why this exists
 
-**AI 影片降噪神器** 透過先進的 **DeepFilterNet3** 深度學習模型，精準過濾非人聲雜訊並使人聲突出，讓你在零成本的情況下，簡單提升影片品質。
+Great audio keeps people watching **Reels, TikTok, and YouTube Shorts**. Many creators hit the same limits:
 
----
+* **Environmental noise** — traffic, crowds, wind
+* **Gear / room noise** — AC hum, laptop fans
+* **Budget** — no pro mic yet
 
-## ✨ 功能亮點 (Key Features)
-*   🚀 **一鍵操作**：無須安裝軟體，瀏覽器直接上傳即可自動處理。
-*   🤖 **頂尖 AI 模型**：採用感知音訊增強模型 DeepFilterNet3，人聲保留度極高。
-*   🔒 **隱私安全**：無狀態 (Stateless) 設計，處理完畢立即刪除暫存檔。
-*   📱 **極簡美學**：受 Nextjs.org 啟發的開發者風格介面，操作流暢。
+**ClearVoice AI** uses **[DeepFilterNet3](https://github.com/Rikorose/DeepFilterNet)** to reduce non-speech noise while keeping voices clear—upload an `.mp4` in the browser, no desktop app install.
 
 ---
 
-## 🏗 技術架構 (Architecture)
+## Features
 
-本專案採用現代化全端架構，確保影音處理的高性能與穩定性：
+* **One click** — drag & drop `.mp4`, processing in the cloud
+* **DeepFilterNet3** — perceptual speech enhancement tuned for clarity
+* **Privacy-minded** — stateless flow; temp uploads are cleaned up after response
+* **Minimal UI** — Next.js-inspired dark layout, focused workflow
+
+---
+
+## Architecture
+
+Modern split stack: Next.js frontend (Vercel) talks directly to FastAPI backend (Docker on Hugging Face Spaces).
 
 ```text
 Browser  ──(FormData POST)──►  Next.js 14 (Vercel)
@@ -39,108 +44,112 @@ Browser  ──(FormData POST)──►  Next.js 14 (Vercel)
                                       │
                                       ▼
                            FastAPI (HF Spaces :7860)
-                           ├─ ffmpeg: 提取並重採樣音訊 (48kHz)
-                           ├─ DeepFilterNet3: 深度神經網路推論
-                           └─ ffmpeg: 重新封裝音軌 → 導出 MP4
-
+                           ├─ ffmpeg: extract / resample audio (48 kHz mono)
+                           ├─ DeepFilterNet3: neural denoise
+                           └─ ffmpeg: mux cleaned audio → output MP4
 ```
 
 ---
 
-## 📂 資料夾結構 (Project Structure)
+## Project structure
 
 ```text
 aiNoiseFilter/
-├── README.md              # 繁體中文說明文件
-├── README.en.md           # English Documentation
-├── .gitignore             # Git 忽略設定
-├── backend/               # 後端實作 (FastAPI)
-│   ├── app.py             # API 主程式 (處理音訊提取與模型推論)
-│   ├── requirements.txt   # Python 依賴環境 (已鎖定版本)
-│   └── Dockerfile         # 封裝 ffmpeg 與深度學習環境
-└── frontend/              # 前端實作 (Next.js 14)
-    ├── package.json       # Node.js 依賴與腳本
-    ├── next.config.mjs    # Next.js 配置
-    ├── .env.local.example # 環境變數範例
-    └── app/               # Next.js App Router 介面與邏輯
-        ├── layout.tsx     # 全域佈局與 SEO Meta Tags
-        ├── page.tsx       # 主頁面邏輯
-        ├── globals.css    # 全域樣式 (Tailwind CSS)
-        └── components/    # 封裝 UI 組件
-            ├── Dropzone.tsx     # 檔案拖放區
-            ├── Spinner.tsx      # 載入動畫
-            └── ResultPlayer.tsx # 結果播放與下載器
-
+├── README.md              # English (default for GitHub)
+├── README.zh.md           # Traditional Chinese
+├── backend/
+│   ├── app.py             # POST /api/denoise
+│   ├── requirements.txt   # pinned Python deps
+│   └── Dockerfile         # ffmpeg + Python runtime (+ git where needed)
+└── frontend/
+    ├── package.json
+    ├── next.config.mjs
+    ├── .env.local.example
+    ├── public/
+    │   └── og-image.png    # Open Graph preview (replace with branded art)
+    └── app/
+        ├── layout.tsx     # fonts + SEO metadata
+        ├── page.tsx       # main UI (client-side)
+        ├── robots.ts
+        ├── sitemap.ts
+        └── components/
 ```
 
 ---
 
-## 🛠 本機啟動 (Local Development)
+## Local development
 
-### 前置條件 (Prerequisites)
+### Prerequisites
 
-* macOS / Linux / Windows (WSL2)
+* macOS / Linux / Windows (WSL2 recommended on Windows)
 * Python 3.11+
 * Node.js 18+
-* **FFmpeg**:
-* macOS: `brew install ffmpeg`
-* Linux: `sudo apt install ffmpeg`
+* **FFmpeg**
+  * macOS: `brew install ffmpeg`
+  * Ubuntu/Debian: `sudo apt install ffmpeg`
 
-
-
-### 1. 後端 (Backend)
+### 1) Backend
 
 ```bash
 cd backend
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
-# 重要：確保安裝相容版本以避免 torchaudio 導入錯誤
+# Match torchaudio 2.2.x — newer releases can break DeepFilterNet imports
 pip install torch==2.2.2 torchaudio==2.2.2 deepfilternet==0.5.6 fastapi uvicorn python-multipart
 uvicorn app:app --reload --port 7860
-
 ```
 
-### 2. 前端 (Frontend)
+### 2) Frontend
 
 ```bash
 cd frontend
 cp .env.local.example .env.local
+# Edit .env.local: NEXT_PUBLIC_API_URL (backend) + NEXT_PUBLIC_SITE_URL (canonical site URL for SEO)
+
 npm install
 npm run dev
-
 ```
 
 ---
 
-## 🚀 部署 (Deployment)
+## Deployment
 
-### 後端 (Hugging Face Spaces)
+### Backend — Hugging Face Spaces (Docker SDK)
 
-1. 建立一個新的 Space，SDK 選擇 **Docker**。
-2. 將 `backend/` 目錄內容推送至該 Space。
-3. **注意**：免費版 Space 在閒置後會自動休眠，首次請求需等待約 30 秒喚醒並載入模型權重。
+1. Create a Space with SDK **Docker**.
+2. Push the contents of [`backend/`](backend/) to the Space repo.
+3. Cold starts on the free tier can take ~30–60s; first inference may download model weights (~200 MB).
 
-### 前端 (Vercel)
+### Frontend — Vercel
 
-1. 匯入 GitHub 倉庫。
-2. 將 **Root Directory** 設定為 `frontend`。
-3. 在 Vercel 環境變數中設定 `NEXT_PUBLIC_API_URL` 指向您的 HF Space 地址。
+1. Import this GitHub repository.
+2. Set **Root Directory** to `frontend`.
+3. Add environment variables:
+   | Name | Example |
+   |------|---------|
+   | `NEXT_PUBLIC_API_URL` | `https://<your-space>.hf.space` |
+   | `NEXT_PUBLIC_SITE_URL` | `https://clear-voice-ai.vercel.app` |
+
+Rebuild after changing env vars so Open Graph URLs resolve correctly.
+
+### SEO checklist (short)
+
+* Set **`NEXT_PUBLIC_SITE_URL`** on Vercel to your production URL.
+* Replace [`frontend/public/og-image.png`](frontend/public/og-image.png) with a **1200×630** branded image.
+* Submit the site URL in [Google Search Console](https://search.google.com/search-console) after deploy.
 
 ---
 
-## ⚠️ 技術開發筆記 (Technical Highlights)
+## Technical notes
 
-為了讓模型在生產環境穩定運行，我們解決了以下技術挑戰：
-
-* **版本鎖定**：強制鎖定 `torchaudio==2.2.2`。2.3.0 之後的版本移除了 `torchaudio.backend`，會導致模型初始化崩潰。
-* **音訊重採樣**：DeepFilterNet 針對 48kHz/Mono 流程優化。系統會自動透過 `ffmpeg` 完成格式轉換，無需用戶手動處理。
-* **Docker 修正**：Dockerfile 中預裝了 `git`，解決了 DeepFilterNet 初始化 Logger 時對 Git Commit Hash 的依賴。
+* **`torchaudio==2.2.2`** — DeepFilterNet relies on APIs removed in newer torchaudio; pin versions per [`backend/requirements.txt`](backend/requirements.txt).
+* **48 kHz mono** — ffmpeg normalizes audio before inference (DeepFilterNet’s sweet spot).
+* **Docker `git`** — some DeepFilterNet logging paths assume a git repo; installing `git` in the image avoids noisy failures.
 
 ---
 
-## 📜 授權與致謝 (Credits & License)
+## Credits & license
 
-* **AI Model**: [DeepFilterNet](https://github.com/Rikorose/DeepFilterNet) by Rikorose.
-* **License**: 本專案採用 **MIT License**。
-* **Note**: DeepFilterNet 模型本身對非商業用途免費，商業使用請遵循原作者授權條款。
+* **Model / research**: [DeepFilterNet](https://github.com/Rikorose/DeepFilterNet) by Rikorose (see upstream license for redistribution / commercial terms).
+* **This repository**: MIT.

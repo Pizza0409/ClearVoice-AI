@@ -2,6 +2,8 @@
 
 import { useCallback, useRef, useState } from 'react';
 
+import { useLanguage } from '../language-provider';
+
 const MAX_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
 interface DropzoneProps {
@@ -16,6 +18,7 @@ function formatBytes(bytes: number): string {
 }
 
 export default function Dropzone({ onFileSelected, disabled }: DropzoneProps) {
+  const { t } = useLanguage();
   const [isDragActive, setIsDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [sizeError, setSizeError] = useState(false);
@@ -93,16 +96,16 @@ export default function Dropzone({ onFileSelected, disabled }: DropzoneProps) {
       ) : (
         <div className="space-y-2">
           <p className="text-sm text-zinc-400">
-            拖曳 <span className="text-[#ededed]">.mp4</span> 至此，或點擊選擇檔案
+            {t.dropzoneLead}
+            <span className="text-[#ededed]">{t.dropzoneMp4}</span>
+            {t.dropzoneTrail}
           </p>
-          <p className="text-xs text-zinc-600">僅支援 MP4 格式，上限 50 MB</p>
+          <p className="text-xs text-zinc-600">{t.dropzoneFootnote}</p>
         </div>
       )}
 
       {sizeError && (
-        <p className="mt-3 text-xs text-red-500">
-          檔案超過 50 MB 限制，請選擇較小的影片
-        </p>
+        <p className="mt-3 text-xs text-red-500">{t.dropzoneTooLarge}</p>
       )}
     </div>
   );

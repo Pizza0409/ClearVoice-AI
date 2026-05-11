@@ -2,14 +2,17 @@
 
 import { useCallback, useState } from 'react';
 import Dropzone from './components/Dropzone';
+import LanguageToggle from './components/LanguageToggle';
 import ResultPlayer from './components/ResultPlayer';
 import Spinner from './components/Spinner';
+import { useLanguage } from './language-provider';
 
 type Status = 'idle' | 'file-selected' | 'processing' | 'done' | 'error';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:7860';
 
 export default function Home() {
+  const { locale, t } = useLanguage();
   const [status, setStatus] = useState<Status>('idle');
   const [file, setFile] = useState<File | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
@@ -55,37 +58,34 @@ export default function Home() {
   const showDropzone = status !== 'done';
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-16">
+    <main
+      lang={locale === 'en' ? 'en' : 'zh-Hant'}
+      className="min-h-screen flex items-center justify-center px-6 py-16"
+    >
       <div className="w-full max-w-xl space-y-8">
-        {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight text-[#ededed]">
-            AI 影片降噪
-          </h1>
-          <p className="text-sm text-zinc-400">
-            上傳影片，AI 自動消除背景雜音
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2 min-w-0 flex-1">
+            <h1 className="text-3xl font-semibold tracking-tight text-[#ededed]">
+              {t.title}
+            </h1>
+            <p className="text-sm text-zinc-400">{t.subtitle}</p>
+          </div>
+          <LanguageToggle />
         </div>
 
-        {/* Dropzone */}
         {showDropzone && (
-          <Dropzone
-            onFileSelected={handleFileSelected}
-            disabled={isProcessing}
-          />
+          <Dropzone onFileSelected={handleFileSelected} disabled={isProcessing} />
         )}
 
-        {/* Action area */}
         {status === 'file-selected' && (
           <button
             onClick={handleDenoise}
             className="w-full bg-white text-black rounded-md px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            開始降噪
+            {t.startDenoise}
           </button>
         )}
 
-        {/* Processing state */}
         {isProcessing && (
           <div className="space-y-4">
             <button
@@ -93,30 +93,24 @@ export default function Home() {
               className="w-full flex items-center justify-center gap-2 bg-white text-black rounded-md px-4 py-2 text-sm font-medium opacity-70 cursor-not-allowed"
             >
               <Spinner />
-              處理中...
+              {t.processing}
             </button>
-            <p className="text-xs text-zinc-500 text-center">
-              AI 正在施展魔法中，這可能需要幾十秒，請稍候...
-            </p>
+            <p className="text-xs text-zinc-500 text-center">{t.processingHint}</p>
           </div>
         )}
 
-        {/* Error state */}
         {status === 'error' && (
           <div className="space-y-4">
-            <p className="text-red-500 text-sm text-center">
-              處理失敗，請稍後再試或檢查影片格式
-            </p>
+            <p className="text-red-500 text-sm text-center">{t.error}</p>
             <button
               onClick={handleReset}
               className="w-full border border-zinc-800 rounded-md px-4 py-2 text-sm text-[#ededed] hover:border-white transition-colors"
             >
-              重新上傳
+              {t.reupload}
             </button>
           </div>
         )}
 
-        {/* Result */}
         {status === 'done' && resultUrl && (
           <ResultPlayer url={resultUrl} onReset={handleReset} />
         )}

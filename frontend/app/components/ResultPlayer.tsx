@@ -1,11 +1,15 @@
 'use client';
 
+import { useLanguage } from '../language-provider';
+
 interface ResultPlayerProps {
   url: string;
   onReset: () => void;
 }
 
 export default function ResultPlayer({ url, onReset }: ResultPlayerProps) {
+  const { t } = useLanguage();
+
   const handleDownload = () => {
     const a = document.createElement('a');
     a.href = url;
@@ -26,14 +30,14 @@ export default function ResultPlayer({ url, onReset }: ResultPlayerProps) {
           onClick={handleDownload}
           className="flex-1 bg-white text-black rounded-md px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity"
         >
-          下載降噪後影片
+          {t.download}
         </button>
 
         <button
           onClick={onReset}
           className="flex-1 border border-zinc-800 rounded-md px-4 py-2 text-sm text-[#ededed] hover:border-white transition-colors"
         >
-          重新上傳
+          {t.reupload}
         </button>
       </div>
     </div>
